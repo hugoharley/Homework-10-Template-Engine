@@ -10,70 +10,169 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+start();
 function start() {
+    createManager();
+    function createManager() {
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "Provide manager's name:",
+                    name: "name"
+                },
+                {
+                    type: "input",
+                    message: "Please provide manager's ID:",
+                    name: "id"
+                },
+                {
+                    type: "input",
+                    message: "Please provide manager's Email:",
+                    name: "email"
+                },
+                {
+                    type: "input",
+                    message: "Please provide the manager's office room number:",
+                    name: "officeNumber"
+                },
+                {
+                    type: "list",
+                    message: "do you want to add members to the team?",
+                    name: "role",
+                    choices: ["yes", "no"]
+                }
+            ])
+            .then((answers) => {
+                const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+                console.log('info1', answers);
+                console.log('info2', manager);
+                if (answers.role === "yes") {
+                    createEmployee();
+                }
+                else {
+                    return process.exit();
+                }
+            });
+    }
     function createEmployee() {
-        let questions = ([
-            {
-                type: "input",
-                message: "Provide team member name:",
-                name: "name"
-            },
-            {
-                type: "input",
-                message: "Please provide team member ID:",
-                name: "id"
-            },
-            {
-                type: "input",
-                message: "Please provide team member Email:",
-                name: "email"
-            },
-            {
-                type: "input",
-                message: "Is the team member an engineer or an intern?",
-                name: "role"
-            },
-        ])
-        inquirer.prompt(questions).then((answers) => {
-            if (answers.role === "engineer") {
-                createEng();
-            }
-            else if (answers.role === "intern") {
-                createIntern();
-            }
-            //prompt and ask is team member engineer or emplyee?
-            //call createEng() or createIntern()
-        })
+        inquirer
+            .prompt([
+
+                {
+                    type: "list",
+                    message: "Is the team member an engineer or an intern?",
+                    name: "role",
+                    choices: ["engineer", "intern"]
+                },
+            ])
+            .then((answers) => {
+                if (answers.role === "engineer") {
+                    createEng();
+                }
+                else if (answers.role === "intern") {
+                    createIntern();
+                }
+                //prompt and ask is team member engineer or emplyee?
+                //call createEng() or createIntern()
+            })
     }
     function createEng() {
-        let engi = ([
-            {
-                type: "input",
-                message: "Please provide your Git Hub username:",
-                name: "github"
-            }
-        ]);
-        inquirer.prompt(engi)
-            .then(const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github, answers.role)
-        createEmployee()
-            ;
-            );
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "Provide team member name:",
+                    name: "name"
+                },
+                {
+                    type: "input",
+                    message: "Please provide team member ID:",
+                    name: "id"
+                },
+                {
+                    type: "input",
+                    message: "Please provide team member Email:",
+                    name: "email"
+                },
+                {
+                    type: "input",
+                    message: "Please provide your Git Hub username:",
+                    name: "github"
+                },
+                {
+                    type: "list",
+                    message: "do you want to add members to the team?",
+                    name: "role",
+                    choices: ["yes", "no"]
+                }
+            ])
+            .then(answers => {
+                const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+                console.log("info3", engineer);
+                console.log("info4", answers);
+                if (answers.role === "yes") {
+                    createEmployee();
+                }
+                else {
+                    return process.exit();
+                }
+            });
         // get engineer detils
         //then create emplyoee
         // add team member to array
     }
     function createIntern() {
-        let intern = ([
-            {
-                type: "input",
-                message: "please provide school:",
-                name: "school"
-            }
-        ]);
-        inquirer.prompt(intern).then(createEmployee());
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "Provide team member name:",
+                    name: "name"
+                },
+                {
+                    type: "input",
+                    message: "Please provide team member ID:",
+                    name: "id"
+                },
+                {
+                    type: "input",
+                    message: "Please provide team member Email:",
+                    name: "email"
+                },
+                {
+                    type: "input",
+                    message: "please provide school:",
+                    name: "school"
+                },
+                {
+                    type: "list",
+                    message: "do you want to add members to the team?",
+                    name: "role",
+                    choices: ["yes", "no"]
+                }
+            ])
+            .then(answers => {
+                const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
+                console.log("info7", intern);
+                console.log("info6", answers);
+
+                if (answers.role === "yes") {
+                    createEmployee();
+                }
+                else {
+                    return process.exit();
+                }
+            });
     }
 }
-start();
+
+async function init() {
+    let employees = await start(Manager, Engineer, Intern);
+    let renderHtml = render(employees);
+    writeHTML(OUTPUT_DIR, outputPath, renderHtml);
+}
+init();
 /*
 let questions = ([
     {
@@ -387,6 +486,6 @@ inquirer
 // for the provided `render` function to work!```
 
 
-const manager = new Manager(name, ID, email, officenumber);
-const engineer = new Engineer(answers.name, answers.ID, answers.email, answers.github);
-const intern = new Intern(answers.name, answers.ID, answers.email, answers.school);
+//const manager = new Manager(name, ID, email, officenumber);
+//const engineer = new Engineer(answers.name, answers.ID, answers.email, answers.github);
+//const intern = new Intern(answers.name, answers.ID, answers.email, answers.school);
